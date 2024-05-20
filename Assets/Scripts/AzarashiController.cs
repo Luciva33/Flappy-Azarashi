@@ -45,10 +45,14 @@ public class AzarashiController : MonoBehaviour
     }
     public void Flap()
     {
-        //velocityを直接書き換えて上方向に加速
-        rd2d.velocity = new Vector2(0.0f, flapVelocity);
         //死んだら羽ばたけない
         if (isDead) return;
+
+        //velocityを直接書き換えて上方向に加速
+        rd2d.velocity = new Vector2(0.0f, flapVelocity);
+        //重力が利いていないときは操作しない
+        if (rd2d.isKinematic) return;
+
     }
 
     void ApplyAngle()
@@ -82,7 +86,18 @@ public class AzarashiController : MonoBehaviour
     void OnCollisionEnter2D(Collision2D other)
     {
         if (isDead) return;
+
+        //クラッシュエフェクト
+        Camera.main.SendMessage("Clash");
+
+
         //何かにぶつかったら死亡フラグ
         isDead = true;
+        Debug.Log(isDead);
+    }
+    public void SetSteerActive(bool active)
+    {
+        //Rigidbodyのon of切り替え
+        rd2d.isKinematic = !active;
     }
 }
